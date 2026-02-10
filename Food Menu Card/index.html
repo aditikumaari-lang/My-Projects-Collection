@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menu Card - The Hungry Spot</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f9f5eb;
+      color: #2d2a2a;
+      line-height: 1.6;
+      padding: 30px 15px 260px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .header h1 {
+      font-size: 3.4rem;
+      color: #c0392b;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .header p {
+      font-size: 1.35rem;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 35px;
+    }
+
+    .category {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.09);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .category:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 55px rgba(0,0,0,0.13);
+    }
+
+    .category-header {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+      padding: 22px;
+      text-align: center;
+      font-size: 1.55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    .items {
+      padding: 20px;
+    }
+
+    .menu-item {
+      display: flex;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px dashed #eee;
+      transition: background 0.25s;
+    }
+
+    .menu-item:hover {
+      background: #fff9f9;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-photo {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-name {
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 4px;
+    }
+
+    .item-desc {
+      font-size: 0.94rem;
+      color: #666;
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    .badges {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .veg       { background: #27ae60; color: white; }
+    .nonveg    { background: #c0392b; color: white; }
+    .spicy     { background: #e67e22; color: white; }
+    .bestseller { background: #f1c40f; color: #2c3e50; }
+
+    .price-area {
+      text-align: right;
+      min-width: 90px;
+      padding-left: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .price {
+      font-size: 1.38rem;
+      font-weight: 800;
+      color: #c0392b;
+      margin-bottom: 12px;
+    }
+
+    .price::before {
+      content: "₹";
+      font-size: 1rem;
+      font-weight: 600;
+      margin-right: 3px;
+    }
+
+    .order-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .qty-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qty-btn.minus { background: #eee; color: #555; }
+    .qty-btn.plus  { background: #c0392b; color: white; }
+
+    .qty-btn:hover { transform: scale(1.08); }
+    .qty-btn:active { transform: scale(0.95); }
+
+    .quantity {
+      width: 44px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #2c3e50;
+    }
+
+    .add-btn {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-size: 0.95rem;
+      min-width: 80px;
+    }
+
+    .add-btn.added {
+      background: #2c3e50;
+      transform: scale(0.97);
+    }
+
+    .add-btn:hover:not(.added) {
+      background: #219653;
+      transform: translateY(-1px);
+    }
+
+    /* Cart Summary */
+    .cart-summary {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+      padding: 16px 20px;
+      z-index: 100;
+      border-top: 1px solid #eee;
+      display: none;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .cart-visible { display: block; }
+
+    .cart-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .cart-items-list {
+      max-height: 180px;
+      overflow-y: auto;
+      font-size: 0.98rem;
+    }
+
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .cart-item-row:last-child { border-bottom: none; }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.22rem;
+      font-weight: 700;
+      padding-top: 12px;
+      border-top: 2px dashed #ddd;
+      color: #c0392b;
+    }
+
+    .order-info {
+      font-size: 0.95rem;
+      color: #4b5563;
+      text-align: center;
+      margin: 8px 0;
+      font-weight: 500;
+      background: #f3f4f6;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .loyalty-info {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 0.98rem;
+      color: #854d0e;
+    }
+
+    .loyalty-info strong { color: #ca8a04; }
+    .loyalty-earned { color: #16a34a; font-weight: 600; }
+
+    .customer-info {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8f8f8;
+      border-radius: 8px;
+    }
+
+    .customer-info input,
+    .customer-info textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .customer-info label {
+      font-weight: 600;
+      display: block;
+      margin: 8px 0 4px;
+      color: #444;
+    }
+
+    .upi-section {
+      margin-top: 16px;
+      padding: 16px;
+      background: #f0f9ff;
+      border-radius: 10px;
+      border: 1px solid #bfdbfe;
+      display: none;
+    }
+
+    .upi-section.show { display: block; }
+
+    .upi-qr-container {
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .upi-qr {
+      width: 220px;
+      height: 220px;
+      border: 8px solid white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      background: white;
+      padding: 12px;
+    }
+
+    .upi-instruction {
+      font-size: 0.95rem;
+      color: #1e40af;
+      margin-top: 12px;
+      font-weight: 500;
+    }
+
+    .payment-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .cart-btn, .whatsapp-btn, .pay-upi-btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .clear-cart { background: #e0e0e0; color: #555; }
+    .whatsapp-btn { background: #25D366; color: white; }
+    .pay-upi-btn  { background: #1e40af; color: white; }
+
+    .clear-cart:hover { background: #d0d0d0; }
+    .whatsapp-btn:hover  { background: #20b058; }
+    .pay-upi-btn:hover   { background: #1e3a8a; }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 70px;
+      color: #666;
+      font-style: italic;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 700px) {
+      body { padding-bottom: 300px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .menu-item { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .item-photo { width: 100%; height: 180px; }
+      .price-area { 
+        text-align: left; 
+        padding-left: 0; 
+        flex-direction: row; 
+        justify-content: space-between; 
+        align-items: center; 
+        width: 100%; 
+        margin-top: 12px; 
+      }
+      .order-controls { justify-content: flex-start; }
+      .cart-summary { padding: 14px 16px; }
+ /* ────────────────────────────────────────────────
+        I'm adding only the new / modified styles
+    ──────────────────────────────────────────────── */
+      .cart-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 600;
+      max-width: 220px;
+    }
+
+    .cart-item-qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 100px;
+    }
+
+    .cart-item-remove {
+      color: #c0392b;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .cart-item-remove:hover {
+      color: #a93226;
+    }
+
+    .promo-section {
+      margin: 16px 0;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+    }
+
+    .promo-input-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .promo-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+    }
+
+    .promo-btn {
+      padding: 0 16px;
+      background: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .promo-btn:hover {
+      background: #0b5ed7;
+    }
+
+    .promo-message {
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    .promo-success { color: #198754; }
+    .promo-error   { color: #dc3545; }
+
+    .history-section {
+      margin-top: 24px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #dee2e6;
+    }
+
+    .history-header {
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .history-list {
+      margin-top: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-date {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+
+    .cart-item-note {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-top: 4px;
+      font-style: italic;
+      max-width: 280px;
+      word-break: break-word;
+    }
+
+    .cart-item-note-input {
+      width: 100%;
+      max-width: 300px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 0.92rem;
+    }
+
+    .cart-item-note-label {
+      font-size: 0.85rem;
+      color: #495057;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .cart-item-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .cart-item-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    /* Base button improvements – apply to all interactive buttons */
+button, .qty-btn, .add-btn, .cart-item-remove, .cart-btn, .whatsapp-btn, .pay-upi-btn, .promo-btn {
+  /* Minimum comfortable tap target */
+  min-width: 44px;
+  min-height: 44px;
+  
+  /* Better touch feedback */
+  transition: all 0.12s ease;
+  touch-action: manipulation; /* Prevents double-tap zoom on mobile */
+}
+
+/* Stronger :active state – very visible feedback */
+button:active, .qty-btn:active, .add-btn:active, .cart-item-remove:active {
+  transform: scale(0.92);
+  opacity: 0.88;
+}
+
+/* Quantity buttons – make them noticeably larger on mobile */
+.qty-btn {
+  width: 48px;
+  height: 48px;
+  font-size: 1.3rem;           /* bigger +/- signs */
+  font-weight: bold;
+}
+
+/* Remove button – slightly smaller but still tappable */
+.cart-item-remove {
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+}
+
+/* Add button in menu */
+.add-btn {
+  min-width: 80px;
+  padding: 10px 18px;
+  font-size: 1rem;
+}
+
+/* Cart action buttons (Clear, WhatsApp, UPI) */
+.payment-actions button,
+.cart-header button {
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  min-height: 52px;
+}
+
+/* Promo apply button */
+.promo-btn {
+  min-width: 80px;
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .qty-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 1.4rem;
+  }
+
+  .cart-item-remove {
+    width: 48px;
+    height: 48px;
+  }
+
+  .add-btn {
+    padding: 12px 20px;
+    font-size: 1.05rem;
+  }
+
+  .payment-actions {
+    flex-direction: column;      /* stack buttons vertically on small screens */
+    gap: 12px;
+  }
+
+  .payment-actions button {
+    width: 100%;                 /* full width on mobile */
+  }
+
+  .cart-item-qty-controls {
+    gap: 10px;
+  }
+  }
+
+  /* Ripple effect container */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+  display: inline-block; /* important for inline buttons */
+}
+
+/* The ripple itself */
+.ripple {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.35); /* white ripple on colored buttons */
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 1;
+  pointer-events: none; /* doesn't block clicks */
+  animation: ripple-effect 0.6s linear;
+}
+
+/* For dark buttons, use darker ripple */
+.pay-upi-btn .ripple,
+.whatsapp-btn .ripple,
+.promo-btn .ripple {
+  background: rgba(0, 0, 0, 0.18); /* dark ripple on light buttons */
+}
+
+/* Animation keyframes */
+@keyframes ripple-effect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Make sure buttons can contain the ripple */
+.qty-btn,
+.add-btn,
+.cart-item-remove,
+.cart-btn,
+.whatsapp-btn,
+.pay-upi-btn,
+.promo-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.whatsapp-btn .ripple { background: rgba(255, 255, 255, 0.4); }
+.pay-upi-btn .ripple  { background: rgba(255, 255, 255, 0.35); }
+.qty-btn.plus .ripple { background: rgba(255, 255, 255, 0.5); }
+
+/* Swipe animation for cart item removal */
+.cart-item-row {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.cart-item-swiping-left {
+  transform: translateX(-100px); /* slide left */
+  opacity: 0.7;
+}
+
+.cart-item-removed {
+  height: 0;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+ <!-- Page Header -->
+    <div class="header">
+      <h1>The Hungry Spot</h1>
+      <p>Authentic Flavors • Fresh Ingredients • Made with Love</p>
+    </div>
+
+ <!-- All menu categories & items -->
+    <div class="menu-grid">
+
+      <!-- Starters -->
+      <div class="category">
+        <div class="category-header">Starters</div>
+        <div class="items">
+          <div class="menu-item" data-item="Crispy Corn Chilli" data-price="189">
+            <img src="https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop" alt="Crispy Corn Chilli" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Crispy Corn Chilli</div>
+              <div class="item-desc">Golden fried corn tossed in spicy garlic & chilli sauce</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+                <span class="badge spicy">Spicy</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">189</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Paneer 65" data-price="249">
+            <img src="https://images.unsplash.com/photo-1630409351341-2e3a4e3b9d2e?w=500&auto=format&fit=crop" alt="Paneer 65" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Paneer 65</div>
+              <div class="item-desc">Crispy fried paneer cubes in spicy tangy masala</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+                <span class="badge bestseller">Best Seller</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">249</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Chicken Lollipop" data-price="299">
+            <img src="https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop" alt="Chicken Lollipop" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Chicken Lollipop</div>
+              <div class="item-desc">Crispy fried chicken wings with garlic-chilli sauce</div>
+              <div class="badges">
+                <span class="badge nonveg">Non-veg</span>
+                <span class="badge spicy">Spicy</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">299</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Course -->
+      <div class="category">
+        <div class="category-header">Main Course</div>
+        <div class="items">
+          <div class="menu-item" data-item="Butter Chicken" data-price="349">
+            <img src="https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop" alt="Butter Chicken" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Butter Chicken</div>
+              <div class="item-desc">Tender chicken in creamy tomato-butter gravy</div>
+              <div class="badges">
+                <span class="badge nonveg">Non-veg</span>
+                <span class="badge bestseller">Best Seller</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">349</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Paneer Lababdar" data-price="319">
+            <img src="https://images.unsplash.com/photo-1630409351341-2e3a4e3b9d2e?w=500&auto=format&fit=crop" alt="Paneer Lababdar" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Paneer Lababdar</div>
+              <div class="item-desc">Paneer in rich creamy tomato-onion gravy</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">319</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Dal Makhani" data-price="269">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Dal Makhani" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Dal Makhani</div>
+              <div class="item-desc">Slow-cooked black lentils with butter & cream</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">269</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Biryani & Rice -->
+      <div class="category">
+        <div class="category-header">Biryani & Rice</div>
+        <div class="items">
+          <div class="menu-item" data-item="Chicken Dum Biryani" data-price="399">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Chicken Biryani" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Chicken Dum Biryani</div>
+              <div class="item-desc">Layered basmati rice with spiced chicken (full plate)</div>
+              <div class="badges">
+                <span class="badge nonveg">Non-veg</span>
+                <span class="badge bestseller">Best Seller</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">399</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Veg Hyderabadi Biryani" data-price="329">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Veg Biryani" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Veg Hyderabadi Biryani</div>
+              <div class="item-desc">Aromatic vegetable biryani with raita</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">329</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Jeera Rice" data-price="169">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Jeera Rice" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Jeera Rice</div>
+              <div class="item-desc">Fragrant cumin-flavored basmati rice</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">169</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breads & Sides -->
+      <div class="category">
+        <div class="category-header">Breads & Sides</div>
+        <div class="items">
+          <div class="menu-item" data-item="Butter Naan" data-price="69">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Butter Naan" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Butter Naan</div>
+              <div class="item-desc">Soft naan brushed with butter</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">69</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Garlic Naan" data-price="89">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Garlic Naan" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Garlic Naan</div>
+              <div class="item-desc">Naan topped with garlic & coriander</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">89</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Raita" data-price="89">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Raita" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Raita</div>
+              <div class="item-desc">Cool yogurt with cucumber & spices</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">89</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indo-Chinese -->
+      <div class="category">
+        <div class="category-header">Indo-Chinese</div>
+        <div class="items">
+          <div class="menu-item" data-item="Veg Manchurian Gravy" data-price="249">
+            <img src="https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop" alt="Veg Manchurian" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Veg Manchurian (Gravy)</div>
+              <div class="item-desc">Crispy vegetable balls in spicy garlic sauce</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+                <span class="badge spicy">Spicy</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">249</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Chilli Chicken" data-price="329">
+            <img src="https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop" alt="Chilli Chicken" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Chilli Chicken</div>
+              <div class="item-desc">Crispy chicken tossed in spicy chilli sauce</div>
+              <div class="badges">
+                <span class="badge nonveg">Non-veg</span>
+                <span class="badge spicy">Spicy</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">329</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Hakka Noodles" data-price="269">
+            <img src="https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop" alt="Hakka Noodles" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Hakka Noodles</div>
+              <div class="item-desc">Stir-fried noodles with vegetables (veg / chicken)</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">269</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desserts -->
+      <div class="category">
+        <div class="category-header">Desserts</div>
+        <div class="items">
+          <div class="menu-item" data-item="Gulab Jamun (2 pcs)" data-price="99">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Gulab Jamun" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Gulab Jamun (2 pcs)</div>
+              <div class="item-desc">Soft milk-solid balls soaked in sugar syrup</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">99</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Ice Cream Scoop" data-price="89">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Ice Cream" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Ice Cream Scoop</div>
+              <div class="item-desc">Vanilla / Chocolate / Strawberry</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">89</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Beverages -->
+      <div class="category">
+        <div class="category-header">Beverages</div>
+        <div class="items">
+          <div class="menu-item" data-item="Masala Chai" data-price="49">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Masala Chai" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Masala Chai</div>
+              <div class="item-desc">Traditional spiced Indian tea</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">49</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Lassi (Sweet / Salted)" data-price="99">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Lassi" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Lassi (Sweet / Salted)</div>
+              <div class="item-desc">Refreshing yogurt-based drink</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">99</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-item" data-item="Thums Up / Coke" data-price="59">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop" alt="Soft Drink" class="item-photo">
+            <div class="item-info">
+              <div class="item-name">Thums Up / Coke</div>
+              <div class="item-desc">Chilled soft drink (300 ml)</div>
+              <div class="badges">
+                <span class="badge veg">Veg</span>
+              </div>
+            </div>
+            <div class="price-area">
+              <div class="price">59</div>
+              <div class="order-controls">
+                <button class="qty-btn minus" onclick="changeQty(this, -1)">–</button>
+                <span class="quantity">0</span>
+                <button class="qty-btn plus" onclick="changeQty(this, 1)">+</button>
+                <button class="add-btn" onclick="addToCart(this)">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+<!-- Floating / fixed Cart Summary Panel -->
+    <div class="cart-summary" id="cartSummary">
+      <div class="cart-inner">
+        <div class="cart-header">
+          <span>Your Cart (<span id="cartCount">0</span>)</span>
+          <button class="cart-btn clear-cart" onclick="clearCart()">Clear Cart</button>
+        </div>
+
+<!-- Generated order number display -->
+        <div class="order-info" id="orderInfo" style="display:none;">
+          Order Number: <strong id="generatedOrderNumber"></strong>
+        </div>
+
+<!-- Loyalty points summary -->
+          <div class="loyalty-info" id="loyaltyInfo" style="display:none;">
+          <div>Your Loyalty Points: <strong id="currentPoints">0</strong></div>
+          <div id="pointsEarnedMessage" style="margin-top:6px;"></div>
+        </div>
+
+
+<!-- List of items in cart -->
+        <div class="cart-items-list" id="cartItemsList"></div>
+
+<!-- Cart items with notes -->
+        <div class="cart-items-list" id="cartItemsList"></div>        
+
+
+<!-- Grand total -->        
+        <div class="cart-total">
+          <span>Total</span>
+          <span id="cartTotal">₹0</span>
+        </div>
+
+<!-- Promo code section -->
+        <div class="promo-section" id="promoSection">
+          <strong>Have a promo code?</strong>
+          <div class="promo-input-group">
+            <input type="text" id="promoCode" class="promo-input" placeholder="Enter code (e.g. SAVE10)">
+            <button class="promo-btn" onclick="Promo.apply()">Apply</button>
+          </div>
+          <div class="promo-message" id="promoMessage"></div>
+        </div>
+
+        <div class="cart-total">
+          <span>Total</span>
+          <span id="cartTotal">₹0</span>
+        </div>
+
+<!-- Customer input fields -->        
+        <div class="customer-info" id="customerInfo">
+          <label for="customerName">Your Name *</label>
+          <input type="text" id="customerName" placeholder="e.g. Rahul / Aditi" required>
+
+          <label for="specialRequest">Table No. / Delivery Address / Special Request</label>
+          <textarea id="specialRequest" rows="2" placeholder="e.g. Table 12, less spicy, delivery to Sector 14..."></textarea>
+        </div>
+
+
+<!-- Dynamic UPI QR code section -->        
+        <div class="upi-section" id="upiSection">
+          <div class="upi-qr-container">
+            <img id="upiQR" class="upi-qr" src="" alt="UPI QR Code" />
+            <div class="upi-instruction">
+              Scan & Pay with any UPI app (GPay, PhonePe, Paytm, BHIM…)
+            </div>
+          </div>
+        </div>
+
+
+<!-- Action buttons -->        
+        <div class="payment-actions">
+          <button class="cart-btn clear-cart" onclick="clearCart()">Clear All</button>
+          <button class="whatsapp-btn" onclick="sendOrderViaWhatsApp()">
+            <i class="fab fa-whatsapp"></i> Order via WhatsApp
+          </button>
+          <button class="pay-upi-btn" onclick="showUPIPayment()">
+            <i class="fas fa-qrcode"></i> Pay via UPI & Confirm
+          </button>
+        </div>
+
+        <div class="ripple-container">
+  <button class="qty-btn plus">+</button>
+</div>
+
+        <!-- Order History -->
+        <div class="history-section">
+          <div class="history-header" onclick="History.toggle()">
+            <span>Order History (last 5)</span>
+            <i class="fas fa-chevron-down" id="historyToggleIcon"></i>
+          </div>
+          <div class="history-list" id="historyList" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =============================================================================
+       JAVASCRIPT – MODULAR STRUCTURE WITH DETAILED COMMENTS
+  ============================================================================= -->
+
+  <script>
+  // ──────────────────────────────────────────────────────────────
+    //  1. CONFIGURATION – central place for all changeable values
+    // ──────────────────────────────────────────────────────────────
+    const CONFIG = {
+      // WhatsApp business / personal number (country code + number, no spaces, no +)
+      WHATSAPP_NUMBER: "919876543210",       // ← CHANGE THIS
+
+      // Your personal or business UPI ID
+      UPI_ID:         "yourname@upi",        // ← CHANGE THIS
+
+      // Name that appears in UPI apps when scanning
+      UPI_MERCHANT:   "The Hungry Spot",
+
+      // Loyalty points rule: how many points per full ₹100 spent
+      POINTS_PER_100: 1,
+
+      // Prefix for order numbers (e.g. THS-20250209-4721)
+      ORDER_PREFIX:   "THS",
+
+      // Minimum amount to earn points (can be 0)
+      MIN_AMOUNT_FOR_POINTS: 100,
+
+      HISTORY_MAX:     5,                     // how many orders to keep
+      PROMO_CODES: {
+        "SAVE10": 0.10,                       // 10% off
+        "FIRST20": 0.20,                      // 20% off first order
+        "FREEDRINK": 59,                       // flat ₹59 off (drink price example)
+      },
+      MAX_NOTE_LENGTH: 80                     // limit for item note in UPI
+    };
+
+
+   // =============================================================================
+    //  2. GLOBAL STATE – what data we are tracking
+  // =============================================================================  
+    const state = {
+      cart: {},                   // itemName → { price, quantity }
+      currentOrderNumber: null,    // string like "THS-20250209-4721"
+      promoDiscount: 0,         // 0 to 1 (percentage) or absolute value
+      promoMessage: "",
+      promoActive: false
+    };
+
+// =============================================================================
+    //  3. DOM HELPER – shorter way to get elements by ID
+// =============================================================================
+    const $ = id => document.getElementById(id);
+
+
+    // ──────────────────────────────────────────────────────────────
+    //  4. LOYALTY MODULE – points calculation & persistence
+    // ──────────────────────────────────────────────────────────────
+    const Loyalty = {
+      /**
+       * Get current points balance from localStorage
+       * @returns {number}
+       */
+      get() {
+        return parseInt(localStorage.getItem('loyaltyPoints') || '0');
+      },
+
+      /**
+       * Save new points balance to localStorage
+       * @param {number} points
+       */
+      save(points) {
+        localStorage.setItem('loyaltyPoints', points);
+      },
+
+      /**
+       * Calculate how many points should be earned from a given total
+       * @param {number} total
+       * @returns {number}
+       */
+      calculate(total) {
+        if (total < CONFIG.MIN_AMOUNT_FOR_POINTS) return 0;
+        return Math.floor(total / 100) * CONFIG.POINTS_PER_100;
+      },
+
+      /**
+       * Award points based on current cart total and update UI
+       * @returns {number} points earned this order
+       */
+      award() {
+        const total = Cart.getTotal();
+        if (total <= 0) return 0;
+
+        const earned = this.calculate(total);
+        const current = this.get();
+        this.save(current + earned);
+        this.updateDisplay(earned);
+        return earned;
+      },
+
+      /**
+       * Update loyalty points UI elements
+       * @param {number} earnedThisOrder - points just earned (0 if just showing balance)
+       */
+      updateDisplay(earnedThisOrder = 0) {
+        const pointsEl = $('currentPoints');
+        const msgEl   = $('pointsEarnedMessage');
+        const infoEl  = $('loyaltyInfo');
+
+        pointsEl.textContent = this.get();
+
+        if (earnedThisOrder > 0) {
+          msgEl.innerHTML = `You earned <span class="loyalty-earned">+${earnedThisOrder}</span> points from this order!`;
+        } else {
+          msgEl.innerHTML = '';
+        }
+
+        infoEl.style.display = 'block';
+      }
+    };
+
+
+    // ──────────────────────────────────────────────────────────────
+    //  5. ORDER NUMBER GENERATION & DISPLAY
+    // ──────────────────────────────────────────────────────────────
+    const OrderNumber = {
+      /**
+       * Create a new unique order number
+       * Format: PREFIX-YYYYMMDD-RANDOM4DIGITS
+       */
+      generate() {
+        const date = new Date().toISOString().slice(0,10).replace(/-/g, '');
+        const rand = Math.floor(1000 + Math.random() * 9000);
+        return `${CONFIG.ORDER_PREFIX}-${date}-${rand}`;
+      },
+
+      show(number) {
+        $('generatedOrderNumber').textContent = number;
+        $('orderInfo').style.display = 'block';
+      },
+
+      hide() {
+        $('orderInfo').style.display = 'none';
+      }
+    };
+
+    // =============================================================================
+    // PROMO / DISCOUNT MODULE
+    // =============================================================================
+    const Promo = {
+      apply() {
+        const codeEl = $('promoCode');
+        const msgEl = $('promoMessage');
+        const code = codeEl.value.trim().toUpperCase();
+
+        msgEl.className = 'promo-message';
+        msgEl.innerHTML = '';
+
+        if (!code) {
+          state.promoDiscount = 0;
+          state.promoActive = false;
+          state.promoMessage = "";
+          Cart.updateUI();
+          return;
+        }
+
+        const discount = CONFIG.PROMO_CODES[code];
+
+        if (discount === undefined) {
+          msgEl.classList.add('promo-error');
+          msgEl.textContent = "Invalid promo code";
+          return;
+        }
+
+        state.promoDiscount = discount;
+        state.promoActive = true;
+
+        msgEl.classList.add('promo-success');
+        if (typeof discount === 'number' && discount < 1) {
+          msgEl.textContent = `${discount * 100}% discount applied!`;
+        } else {
+          msgEl.textContent = `₹${discount} off applied!`;
+        }
+
+        Cart.updateUI();
+      },
+
+      clear() {
+        state.promoDiscount = 0;
+        state.promoActive = false;
+        state.promoMessage = "";
+        $('promoCode').value = '';
+        $('promoMessage').innerHTML = '';
+      }
+    };
+
+    // =============================================================================
+    // ORDER HISTORY MODULE
+    // =============================================================================
+    const History = {
+      save() {
+        const total = Cart.getTotal();
+        if (total <= 0) return;
+
+        const entry = {
+          date: new Date().toLocaleString(),
+          orderNumber: state.currentOrderNumber,
+          items: Object.entries(state.cart).map(([name, data]) => ({
+            name,
+            qty: data.quantity,
+            price: data.price
+          })),
+          total,
+          discount: state.promoDiscount
+        };
+
+        let history = this.get();
+        history.unshift(entry);
+        history = history.slice(0, CONFIG.HISTORY_MAX); // keep only last N
+
+        localStorage.setItem('orderHistory', JSON.stringify(history));
+        this.updateDisplay();
+      },
+
+      get() {
+        try {
+          return JSON.parse(localStorage.getItem('orderHistory') || '[]');
+        } catch {
+          return [];
+        }
+      },
+
+      updateDisplay() {
+        const list = $('historyList');
+        const items = this.get();
+
+        if (items.length === 0) {
+          list.innerHTML = '<p style="color:#6c757d;">No previous orders yet.</p>';
+          return;
+        }
+
+        let html = '';
+        items.forEach(order => {
+          html += `
+            <div class="history-item">
+              <div class="history-date">${order.date}</div>
+              <strong>#${order.orderNumber}</strong><br>
+              ${order.items.map(i => `${i.name} × ${i.qty}`).join(', ')}<br>
+              <strong>Total: ₹${order.total}</strong>
+              ${order.discount > 0 ? ` (after ${order.discount < 1 ? (order.discount*100+'%') : '₹'+order.discount} discount)` : ''}
+            </div>
+          `;
+        });
+
+        list.innerHTML = html;
+      },
+
+      toggle() {
+        const list = $('historyList');
+        const icon = $('historyToggleIcon');
+        if (list.style.display === 'none' || !list.style.display) {
+          list.style.display = 'block';
+          icon.className = 'fas fa-chevron-up';
+        } else {
+          list.style.display = 'none';
+          icon.className = 'fas fa-chevron-down';
+        }
+      }
+    };
+
+
+    // ──────────────────────────────────────────────────────────────
+    //  6. CART MANAGEMENT – core business logic
+    // ──────────────────────────────────────────────────────────────
+    const Cart = {
+      /**
+       * Add items to cart (or increase quantity)
+       */
+      add(name, price, qty, note = "") {
+        if (!state.cart[name]) {
+          state.cart[name] = { price, quantity: 0, note: "" };
+        }
+        state.cart[name].quantity += qty;
+        if (note.trim()) {
+          state.cart[name].note = note.trim();
+        }
+      },
+
+
+/** * Update quantity of an item already in cart
+    * If quantity becomes 0 → remove item */      
+      updateQuantity(name, newQty) {
+        if (!state.cart[name]) return;
+
+        if (newQty <= 0) {
+          this.remove(name);
+        } else if (state.cart[name]) {
+          state.cart[name].quantity = newQty;
+          this.updateUI();
+        }
+      },
+
+      updateNote(name, newNote) {
+        if (state.cart[name]) {
+          state.cart[name].note = newNote.trim().substring(0, 120);
+          this.updateUI();
+        }
+      },
+
+      remove(name) {
+        delete state.cart[name];
+        this.updateUI();
+      },
+
+      getTotalBeforeDiscount() {
+        return Object.values(state.cart).reduce((sum, item) => {
+          return sum + item.price * item.quantity;
+        }, 0);
+      },
+
+      getTotal() {
+        const subtotal = this.getTotalBeforeDiscount();
+        if (state.promoActive) {
+          const discount = state.promoDiscount;
+          if (discount < 1) {
+            // percentage
+            return subtotal * (1 - discount);
+          } else {
+            // flat amount
+            return Math.max(0, subtotal - discount);
+          }
+        }
+        return subtotal;
+      },
+
+      getItemCount() {
+        return Object.values(state.cart).reduce((sum, item) => sum + item.quantity, 0);
+      },
+
+      /**
+       * Remove all items from cart and reset related state
+       */
+      clear() {
+        state.cart = {};
+        state.currentOrderNumber = null;
+        Promo.clear();
+        $('customerName').value = '';
+        $('specialRequest').value = '';
+        this.updateUI();
+      },
+
+      /**
+       * Calculate total amount of current cart
+       * @returns {number}
+       */
+      getTotal() {
+        return Object.values(state.cart).reduce((sum, item) => {
+          return sum + (item.price * item.quantity);
+        }, 0);
+      },
+
+      /**
+       * Count total quantity of items in cart
+       * @returns {number}
+       */
+      getItemCount() {
+        return Object.values(state.cart).reduce((sum, item) => sum + item.quantity, 0);
+      },
+
+      /**
+       * Refresh all cart-related UI elements
+       */
+      updateUI() {
+        const count = this.getItemCount();
+        const total = this.getTotal() .toFixed(0);
+        const subtotal = this.getTotalBeforeDiscount().toFixed(0);
+
+        $('cartCount').textContent = count;
+        $('cartTotal').textContent = `₹${total}`;
+
+        let html = '';
+        Object.entries(state.cart).forEach(([name, data]) => {
+          const itemTotal = data.price * data.quantity;
+         
+          html += `
+    <div class="cart-item-row">
+      <div class="cart-item-main-row">
+        <div class="cart-item-left">
+          <div class="cart-item-name">${name}</div>
+          
+          <!-- Quantity controls inside cart -->
+          <div class="cart-item-qty-controls">
+            <button class="qty-btn minus" 
+                    onclick="Cart.updateQuantity('${name}', ${data.quantity - 1})">
+
+            </button>
+            <span class="quantity">${data.quantity}</span>
+            <button class="qty-btn plus" 
+                    onclick="Cart.updateQuantity('${name}', ${data.quantity + 1})">
+              +
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:16px;">
+          <span>₹${itemTotal}</span>
+          <button class="cart-item-remove" onclick="Cart.remove('${name}')">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Optional: note field (from previous version) -->
+      <div style="width:100%; margin-top:6px;">
+        <input 
+          type="text" 
+          class="cart-item-note-input" 
+          value="${data.note || ''}" 
+          placeholder="e.g. no onion, less spicy, extra cheese"
+          maxlength="120"
+          oninput="Cart.updateNote('${name}', this.value)"
+        >
+        ${data.note ? `<div class="cart-item-note">Note: ${data.note}</div>` : ''}
+      </div>
+
+    </div>
+  `;
+});
+
+// After creating the row element (assume you create DOM elements instead of innerHTML for better control)
+
+const row = document.createElement('div');
+row.classList.add('cart-item-row');
+// ... add content to row ...
+
+Gestures.attachSwipe(row, {
+  onSwipeLeft: (target) => {
+    target.classList.add('cart-item-swiping-left');
+    setTimeout(() => {
+      Cart.remove(name);
+    }, 300); // wait for animation
+  }
+});
+
+$('cartItemsList').appendChild(row);
+
+$('cartItemsList').innerHTML = html || '<div class="empty-cart-message">Your cart is empty</div>';
+
+        const summary      = $('cartSummary');
+        const customerInfo = $('customerInfo');
+        const loyaltyInfo  = $('loyaltyInfo');
+
+        if (count > 0) {
+          summary.classList.add('cart-visible');
+          customerInfo.classList.add('show');
+          Loyalty.updateDisplay(0);
+
+          if (!state.currentOrderNumber) {
+            state.currentOrderNumber = OrderNumber.generate();
+            OrderNumber.show(state.currentOrderNumber);
+          }
+        } else {
+          summary.classList.remove('cart-visible');
+          customerInfo.classList.remove('show');
+          loyaltyInfo.style.display = 'none';
+          OrderNumber.hide();
+          state.currentOrderNumber = null;
+        }
+
+        // Hide UPI QR when cart content changes
+        $('upiSection').classList.remove('show');
+        $('upiQR').src = '';
+      }
+    };
+
+
+    // ──────────────────────────────────────────────────────────────
+    //  7. ORDER & COMMUNICATION (WhatsApp)
+    // ──────────────────────────────────────────────────────────────
+    const Order = {
+      /**
+       * Build the complete message that will be sent via WhatsApp
+       * @returns {string} formatted message
+       */
+      buildMessage() {
+        const name  = $('customerName').value.trim() || "Customer";
+        const notes = $('specialRequest').value.trim();
+
+        let msg = `*New Order #${state.currentOrderNumber} from ${name}*\n\n`;
+        msg += `🛒 Order Details:\n`;
+
+        let total = 0;
+        Object.entries(state.cart).forEach(([name, data]) => {
+          const itemTotal = data.price * data.quantity;
+          msg += `• ${name} × ${data.quantity} = ₹${itemTotal}\n`;
+          total += itemTotal;
+        });
+
+        msg += `\n💰 Total: ₹${total}\n`;
+
+        const earned = Loyalty.award();
+        if (earned > 0) {
+          msg += `🎁 You earned ${earned} loyalty points!\n`;
+        }
+
+        if (notes) {
+          msg += `\n📝 Notes:\n${notes}\n`;
+        }
+
+        msg += `\nThank you! Please confirm 🙏`;
+
+        return msg;
+      },
+
+      /**
+       * Open WhatsApp with pre-filled order message
+       */
+      sendViaWhatsApp() {
+        if (Object.keys(state.cart).length === 0) {
+          alert("Your cart is empty!");
+          return;
+        }
+
+        // Generate order number if not already done
+        if (!state.currentOrderNumber) {
+          state.currentOrderNumber = OrderNumber.generate();
+        }
+
+        const message = this.buildMessage();
+        const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+      }
+    };
+
+
+    // ──────────────────────────────────────────────────────────────
+    //  8. UPI PAYMENT MODULE
+    // ──────────────────────────────────────────────────────────────
+    const Payment = {
+      /**
+       * Generate and display dynamic UPI QR code with correct amount
+       */
+      showUpiQR() {
+        const total = Cart.getTotal();
+        if (total <= 0 || Object.keys(state.cart).length === 0) {
+          alert("Cart is empty!");
+          return;
+        }
+
+        // Ensure we have an order number
+        if (!state.currentOrderNumber) {
+          state.currentOrderNumber = OrderNumber.generate();
+        }
+
+        // Award points (in real system → after payment confirmation)
+        Loyalty.award();
+
+        const name = $('customerName').value.trim() || "Customer";
+        const note = $('specialRequest').value.trim();
+
+        let upiLink = `upi://pay?pa=${CONFIG.UPI_ID}&pn=${encodeURIComponent(CONFIG.UPI_MERCHANT)}&am=${total}&cu=INR&tn=Order#${state.currentOrderNumber}-${encodeURIComponent(name)}`;
+
+        if (note) {
+          upiLink += `&tr=${encodeURIComponent(note.substring(0,50))}`;
+        }
+
+        // Using a free QR code generation service
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiLink)}`;
+
+        $('upiQR').src = qrUrl;
+        $('upiSection').classList.add('show');
+      }
+    };
+
+
+    // ──────────────────────────────────────────────────────────────
+    //  9. EVENT HANDLERS & UTILITIES
+    // ──────────────────────────────────────────────────────────────
+
+    /**
+     * Change quantity in item selector (+ / – buttons)
+     */
+    function changeQty(btn, delta) {
+      const controls = btn.parentElement;
+      const qtyEl = controls.querySelector('.quantity');
+      let qty = parseInt(qtyEl.textContent) || 0;
+      
+      qty = Math.max(0, qty + delta);
+      qtyEl.textContent = qty;
+
+      controls.querySelector('.minus').disabled = (qty === 0);
+    }
+
+    /**
+     * Add selected quantity of item to cart
+     */
+    function addToCart(btn) {
+      const item = btn.closest('.menu-item');
+      const name = item.dataset.item;
+      const price = parseInt(item.dataset.price);
+      const qty = parseInt(item.querySelector('.quantity').textContent) || 0;
+
+      if (qty === 0) return;
+
+      Cart.add(name, price, qty);
+
+      // Visual feedback on button
+      btn.textContent = 'Added!';
+      btn.classList.add('added');
+      setTimeout(() => {
+        btn.textContent = 'Add';
+        btn.classList.remove('added');
+      }, 1200);
+
+      // Reset quantity selector
+      item.querySelector('.quantity').textContent = '0';
+      item.querySelector('.minus').disabled = true;
+
+      Cart.updateUI();
+    }
+
+    /**
+ * Creates a ripple effect on button tap/click
+ * Works great on mobile touch events
+ */
+function createRipple(event) {
+  const btn = event.currentTarget;
+
+  // Remove any existing ripple (in case of very fast taps)
+  const existingRipple = btn.querySelector('.ripple');
+  if (existingRipple) {
+    existingRipple.remove();
+  }
+
+  // Create new ripple element
+  const ripple = document.createElement('span');
+  ripple.classList.add('ripple');
+
+  // Get click/touch position relative to button
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+
+  const x = event.clientX - rect.left - size / 2;
+  const y = event.clientY - rect.top - size / 2;
+
+  ripple.style.width = ripple.style.height = `${size}px`;
+  ripple.style.left = `${x}px`;
+  ripple.style.top = `${y}px`;
+
+  btn.appendChild(ripple);
+
+  // Remove ripple after animation ends
+  setTimeout(() => {
+    ripple.remove();
+  }, 700); // slightly longer than animation duration
+}
+
+// Attach ripple to all interactive buttons
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll(
+    '.qty-btn, .add-btn, .cart-item-remove, .cart-btn, .whatsapp-btn, .pay-upi-btn, .promo-btn'
+  );
+
+  buttons.forEach(btn => {
+    // Use pointerdown instead of click → better for touch
+    btn.addEventListener('pointerdown', createRipple);
+  });
+});
+
+// =============================================================================
+// GESTURE / SWIPE MODULE – detects swipes on elements
+// =============================================================================
+const Gestures = {
+  /**
+   * Attach swipe listeners to a target element
+   * @param {HTMLElement} target – element to watch (e.g. cart item row)
+   * @param {Object} callbacks – { onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown }
+   * @param {number} threshold – min distance to count as swipe (default 80px)
+   */
+  attachSwipe(target, callbacks = {}, threshold = 80) {
+    let startX = 0;
+    let startY = 0;
+    let startTime = 0;
+
+    target.addEventListener('touchstart', e => {
+      if (e.touches.length !== 1) return; // ignore multi-touch
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startTime = Date.now();
+      target.style.transition = 'none'; // smooth during drag
+    }, { passive: true });
+
+    target.addEventListener('touchmove', e => {
+      if (!startX) return;
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+
+      // Optional: visual drag feedback (slide item)
+      target.style.transform = `translateX(${deltaX}px)`;
+
+    }, { passive: true });
+
+    target.addEventListener('touchend', e => {
+      if (!startX) return;
+
+      const deltaX = e.changedTouches[0].clientX - startX;
+      const deltaY = e.changedTouches[0].clientY - startY;
+      const duration = Date.now() - startTime;
+      const velocity = Math.abs(deltaX) / duration; // optional for flick detection
+
+      target.style.transition = 'transform 0.3s ease'; // restore smooth
+      target.style.transform = 'translateX(0)'; // reset position
+
+      // Detect direction
+      if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0 && callbacks.onSwipeLeft) {
+          callbacks.onSwipeLeft(target);
+        } else if (deltaX > 0 && callbacks.onSwipeRight) {
+          callbacks.onSwipeRight(target);
+        }
+      } else if (Math.abs(deltaY) > threshold && Math.abs(deltaY) > Math.abs(deltaX)) {
+        if (deltaY < 0 && callbacks.onSwipeUp) callbacks.onSwipeUp(target);
+        if (deltaY > 0 && callbacks.onSwipeDown) callbacks.onSwipeDown(target);
+      }
+
+      // Reset tracking
+      startX = startY = startTime = 0;
+    }, { passive: true });
+  }
+};
+
+    // Initialize cart UI when page loads
+    Cart.updateUI();
+  </script>
+</body>
+</html>
